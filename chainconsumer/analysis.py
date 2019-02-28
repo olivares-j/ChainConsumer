@@ -437,10 +437,10 @@ class Analysis(object):
         return bounds
 
     def get_parameter_summary_cumulative(self, chain, parameter):
-        xs, _, cs = self._get_smoothed_histogram(chain, parameter)
         desired_area = chain.config["summary_area"]
-        vals = [0.5 - desired_area / 2, 0.5, 0.5 + desired_area / 2]
-        bounds = interp1d(cs, xs)(vals)
+        data = chain.get_data(parameter)
+        vals = [100.0*(0.5 - desired_area / 2), 50, 100.0*(0.5 + desired_area / 2)]
+        bounds = np.percentile(data,vals)
         return bounds
 
     def get_parameter_summary_max(self, chain, parameter):
