@@ -395,7 +395,14 @@ class Plotter(object):
                 for chain in chains:
                     if p in chain.parameters:
                         chain_row = chain.get_data(p)
-                        self._plot_walk(ax, p, chain_row, extents=extents.get(p), convolve=convolve, color=chain.config["color"])
+                        self._plot_walk(ax, p, chain_row, 
+                            extents=extents.get(p), 
+                            convolve=convolve, 
+                            color=chain.config["color"],
+                            marker_style=chain.config["marker_style"],
+                            marker_size=chain.config["marker_size"],
+                            marker_alpha=chain.config["marker_alpha"],
+                            linewidth=chain.config["linewidth"])
                 if truth.get(p) is not None:
                     self._plot_walk_truth(ax, truth.get(p))
             else:
@@ -403,18 +410,34 @@ class Plotter(object):
                     for chain in chains:
                         if chain.posterior is not None:
                             self._plot_walk(ax, "$\log(P)$", chain.posterior - chain.posterior.max(),
-                                            convolve=convolve, color=chain.config["color"])
+                                            convolve=convolve, 
+                                            color=chain.config["color"],
+                                            marker_style=chain.config["marker_style"],
+                                            marker_size=chain.config["marker_size"],
+                                            marker_alpha=chain.config["marker_alpha"],
+                                            linewidth=chain.config["linewidth"])
                 else:
                     if log_weight is None:
                         log_weight = np.any([chain.weights.mean() < 0.1 for chain in chains])
                     if log_weight:
                         for chain in chains:
                             self._plot_walk(ax, r"$\log_{10}(w)$", np.log10(chain.weights),
-                                            convolve=convolve, color=chain.config["color"])
+                                            convolve=convolve, 
+                                            color=chain.config["color"],
+                                            marker_style=chain.config["marker_style"],
+                                            marker_size=chain.config["marker_size"],
+                                            marker_alpha=chain.config["marker_alpha"],
+                                            linewidth=chain.config["linewidth"])
                     else:
                         for chain in chains:
                             self._plot_walk(ax, "$w$", chain.weights,
-                                            convolve=convolve, color=chain.config["color"])
+                                            convolve=convolve,
+                                            color=chain.config["color"],
+                                            marker_style=chain.config["marker_style"],
+                                            marker_size=chain.config["marker_size"],
+                                            marker_alpha=chain.config["marker_alpha"],
+                                            linewidth=chain.config["linewidth"])
+        ax.set_xlabel("Step")
 
         if filename is not None:
             if isinstance(filename, str):
@@ -1114,7 +1137,10 @@ class Plotter(object):
         return max_val
 
     def _plot_walk(self, ax, parameter, data, truth=None, extents=None,
-                   convolve=None, color=None):  # pragma: no cover
+                   convolve=None, color=None,marker_style=".",
+                   marker_size=2,
+                   marker_alpha=0.5,
+                   linewidth=0.5):  # pragma: no cover
         if extents is not None:
             ax.set_ylim(extents)
         assert convolve is None or isinstance(convolve, int), \
@@ -1124,7 +1150,10 @@ class Plotter(object):
         ax.set_ylabel(parameter)
         if color is None:
             color = "#0345A1"
-        ax.scatter(x, data, c=color, s=2, marker=".", edgecolors="none", alpha=0.5)
+        ax.plot(x, data,marker_style,c=color,
+            markersize=marker_size, 
+            alpha=marker_alpha,
+            linewidth=linewidth)
         max_ticks = self.parent.config["max_ticks"]
         ax.yaxis.set_major_locator(MaxNLocator(max_ticks, prune="lower"))
 
