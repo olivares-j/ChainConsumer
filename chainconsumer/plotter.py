@@ -518,7 +518,7 @@ class Plotter(object):
         fig, axes = plt.subplots(nrows=num_rows, ncols=num_cols, figsize=figsize, squeeze=False)
         fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.1, wspace=0.05, hspace=hspace)
 
-        formatter = ScalarFormatter(useOffset=False)
+        formatter = ScalarFormatter(useOffset=True)
         formatter.set_powerlimits((-3, 4))
 
         for i, ax in enumerate(axes.flatten()):
@@ -863,7 +863,7 @@ class Plotter(object):
         fig, axes = plt.subplots(n, n, figsize=figsize, squeeze=False, gridspec_kw=gridspec_kw)
         fig.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.1, wspace=0.05 * spacing, hspace=0.05 * spacing)
 
-        formatter = ScalarFormatter(useOffset=False)
+        formatter = ScalarFormatter(useOffset=True,useMathText=True)
         formatter.set_powerlimits((-3, 4))
 
         extents = self._get_custom_extents(all_parameters, chains, external_extents)
@@ -906,8 +906,9 @@ class Plotter(object):
                         if diagonal_tick_labels:
                             _ = [l.set_rotation(45) for l in ax.get_xticklabels()]
                         _ = [l.set_fontsize(tick_font_size) for l in ax.get_xticklabels()]
-                        ax.xaxis.set_major_locator(MaxNLocator(max_ticks, prune="lower"))
-                        ax.xaxis.set_major_formatter(formatter)
+                        # ax.xaxis.set_major_locator(MaxNLocator(max_ticks, prune="lower"))
+                        # ax.xaxis.set_major_formatter(formatter)
+                        ax.ticklabel_format(style='sci', axis='x', scilimits=(-3,4))
                     if display_y_ticks:
                         if diagonal_tick_labels:
                             _ = [l.set_rotation(45) for l in ax.get_yticklabels()]
